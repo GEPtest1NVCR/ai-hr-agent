@@ -2,7 +2,7 @@ import os
 import streamlit as st
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings import OpenAIEmbeddings
+from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 from langchain.chat_models import ChatOpenAI
@@ -18,8 +18,10 @@ def load_qa():
     splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
     chunks = splitter.split_documents(docs)
 
-    # Let langchain automatically read the API key from Streamlit secrets
-    embeddings = OpenAIEmbeddings(model="text-embedding-ada-002")
+    embeddings = OpenAIEmbeddings(
+        model="text-embedding-ada-002",
+        openai_api_key=os.getenv("OPENAI_API_KEY")
+    )
 
     vectorstore = Chroma.from_documents(
         chunks,
@@ -29,7 +31,7 @@ def load_qa():
 
     retriever = vectorstore.as_retriever()
     qa_chain = RetrievalQA.from_chain_type(
-        llm=ChatOpenAI(),
+        llm=ChatOpenAI(openai_api_key=os.getenv("OPENAI_API_KEY")),
         retriever=retriever
     )
     return qa_chain
