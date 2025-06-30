@@ -16,7 +16,7 @@ def load_qa():
     docs = loader.load()
     splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
     chunks = splitter.split_documents(docs)
-    embeddings = OpenAIEmbeddings()
+    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
     vectorstore = Chroma.from_documents(chunks, embedding=embeddings, persist_directory="./vector_db")
     retriever = vectorstore.as_retriever()
     qa_chain = RetrievalQA.from_chain_type(llm=ChatOpenAI(), retriever=retriever)
