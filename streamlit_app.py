@@ -18,12 +18,8 @@ def load_qa():
     splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
     chunks = splitter.split_documents(docs)
 
-    # Updated model + explicit API key loading
-    openai_api_key = os.getenv("OPENAI_API_KEY")
-    embeddings = OpenAIEmbeddings(
-        model="text-embedding-ada-002",  # Stable model
-        openai_api_key=openai_api_key
-    )
+    # Let langchain automatically read the API key from Streamlit secrets
+    embeddings = OpenAIEmbeddings(model="text-embedding-ada-002")
 
     vectorstore = Chroma.from_documents(
         chunks,
@@ -33,7 +29,7 @@ def load_qa():
 
     retriever = vectorstore.as_retriever()
     qa_chain = RetrievalQA.from_chain_type(
-        llm=ChatOpenAI(openai_api_key=openai_api_key),
+        llm=ChatOpenAI(),
         retriever=retriever
     )
     return qa_chain
