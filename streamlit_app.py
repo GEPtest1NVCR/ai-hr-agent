@@ -16,8 +16,7 @@ def load_qa():
     docs = loader.load()
     splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
     chunks = splitter.split_documents(docs)
-    import os
-embeddings = OpenAIEmbeddings(
+    embeddings = OpenAIEmbeddings(
     model="text-embedding-3-small",
     openai_api_key=os.getenv("OPENAI_API_KEY")
 )
