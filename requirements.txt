@@ -3,3 +3,4 @@ openai
 chromadb
 streamlit
 pypdf
+langchain-community
