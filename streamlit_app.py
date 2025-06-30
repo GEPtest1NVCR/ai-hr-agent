@@ -14,13 +14,21 @@ st.title("🇨🇭 HR Assistant for Novocure (Switzerland)")
 def load_qa():
     loader = PyPDFLoader("Switzerland_Novocure_GEP.pdf")
     docs = loader.load()
+
     splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
     chunks = splitter.split_documents(docs)
+
     embeddings = OpenAIEmbeddings(
-    model="text-embedding-3-small",
-    openai_api_key=os.getenv("OPENAI_API_KEY")
-)
-    vectorstore = Chroma.from_documents(chunks, embedding=embeddings, persist_directory="./vector_db")
+        model="text-embedding-3-small",
+        openai_api_key=os.getenv("OPENAI_API_KEY")
+    )
+
+    vectorstore = Chroma.from_documents(
+        chunks,
+        embedding=embeddings,
+        persist_directory="./vector_db"
+    )
+
     retriever = vectorstore.as_retriever()
     qa_chain = RetrievalQA.from_chain_type(llm=ChatOpenAI(), retriever=retriever)
     return qa_chain
